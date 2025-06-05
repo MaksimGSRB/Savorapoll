@@ -26,7 +26,7 @@ Website hosted on DigitalOcean
 * NameCheap only used for the purchase of the domain
   * thus/i.e. DigitalOcean was used to host the DNS server
 
-Record should should the following DNS record
+DNS Record should match the image below
 
 ![image](https://github.com/user-attachments/assets/c533a8fd-3218-4746-91a5-17b5d87d1d16)
 
