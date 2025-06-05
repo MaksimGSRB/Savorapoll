@@ -34,6 +34,7 @@ DNS Record should match the image below
 ## Obtaining SSL
 
 First: Verify following ports are open
+
 `22 = ssh`
 
 `80 = http`
