@@ -20,6 +20,8 @@ In other words, Savora will indirectly establish this philosophy or 'initial con
 
 Website hosted on DigitalOcean 
 
+## Obtaining and Applying Custom Domain
+
 ## Obtaining SSL
 
 in CLI 
