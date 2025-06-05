@@ -1,1 +1,20 @@
-# Savorapoll
+#  Savorapoll
+
+#  Brief Overview of Savorapoll
+
+Savora is a self-hosted web application, it is designed to allowed users to participate in anonymous opinion polling. Savora emphasises privacy, simplicity and honesty, with regards to modern technology, these values can be difficult to come by. With no unique user information combined with a straightforward simple polling operation, Savora fosters an environment in hopes of users being completely honest with their vote on each poll.
+
+Users will be able to enter the site, cast one vote on each of the three polls that are available to users accessing the site. Users will only be able to cast one vote for each of the three different polls. At the end of the week, the poll results are shown with the percentage of users selecting each option for each poll. Users will not be able to input any information or comments regarding any of the polls. Once a user has casted their votes, they will not be able to see what they voted for afterwards and not be able to vote again until the new poll's are released.
+
+Savora's primary goal is that users will strive to be completely honest and open with their opinions regardless if a topic is controversial or anodyne. Over time, with users seeing the poll votes on topics, I have hopes that it will encourage real world conversation amongst individuals encouraging honest opinions on a variety of topics with little to no prejudice.
+
+In other words, Savora will indirectly establish this philosophy or 'initial condition' through it's website. Over the course of time, fostering this philosophy to individuals in the real world with no-intervention.
+
+
+##  Preparation
+
+Website hosted on DigitalOcean 
+
+
+
+
