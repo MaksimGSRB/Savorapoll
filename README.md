@@ -20,6 +20,11 @@ In other words, Savora will indirectly establish this philosophy or 'initial con
 
 Website hosted on DigitalOcean 
 
+## Obtaining SSL
 
+in CLI 
+==sudo apt update==
+'sudo apt install certbot python3-certbot-apache -y'
+'sudo certbot --apache
 
 
