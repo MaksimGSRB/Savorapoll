@@ -24,7 +24,8 @@ Website hosted on DigitalOcean
 
 ## Obtaining SSL
 
-in CLI 
+in CLI
+
 `apt update`
 
 `sudo apt install certbot python3-certbot-apache -y`
