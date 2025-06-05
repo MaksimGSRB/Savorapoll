@@ -1,5 +1,10 @@
 #  Savorapoll
 
+##  Contents
+
+### Breif Overview
+### Documentation 
+
 ## Brief Overview of Savorapoll
 
 Savora is a self-hosted web application, it is designed to allowed users to participate in anonymous opinion polling. Savora emphasises privacy, simplicity and honesty, with regards to modern technology, these values can be difficult to come by. With no unique user information combined with a straightforward simple polling operation, Savora fosters an environment in hopes of users being completely honest with their vote on each poll.
