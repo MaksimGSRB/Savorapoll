@@ -1,6 +1,6 @@
-#  Savorapoll
+# Savorapoll
 
-##  Contents
+## Contents
 
 ### Breif Overview
 ### Documentation 
@@ -16,7 +16,7 @@ Savora's primary goal is that users will strive to be completely honest and open
 In other words, Savora will indirectly establish this philosophy or 'initial condition' through it's website. Over the course of time, fostering this philosophy to individuals in the real world with no-intervention.<
 
 
-##  Preparation
+## Preparation
 
 Website hosted on DigitalOcean 
 
