@@ -26,7 +26,9 @@ Website hosted on DigitalOcean
 
 in CLI 
 `apt update`
+
 **sudo apt install certbot python3-certbot-apache -y**
+
 **sudo certbot --apache**
 
 autodetected both domains (www.savorapoll.com) (savorapoll.com)
