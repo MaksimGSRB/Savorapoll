@@ -23,8 +23,14 @@ Website hosted on DigitalOcean
 ## Obtaining SSL
 
 in CLI 
-==sudo apt update==
-'sudo apt install certbot python3-certbot-apache -y'
-'sudo certbot --apache
+**sudo apt update**
+**sudo apt install certbot python3-certbot-apache -y**
+**sudo certbot --apache**
 
+autodetected both domains (www.savorapoll.com) (savorapoll.com)
 
+followed prompts 
+
+Certificate should now apply and auto-renew every 90 days.
+
+Verified by manually typing in the full domain (https://www.savorapoll.com) (do so for both)
