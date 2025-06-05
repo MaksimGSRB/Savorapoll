@@ -29,9 +29,11 @@ Website hosted on DigitalOcean
 
 ## Obtaining SSL
 
-First: Verify correct ports are open
-`22 = tcp`
+First: Verify following ports are open
+`22 = ssh`
+
 `80 = http`
+
 `443 = https`
 
 in CLI
