@@ -18,11 +18,21 @@ In other words, Savora will indirectly establish this philosophy or 'initial con
 
 ## Preparation
 
-Website hosted on DigitalOcean 
+Website hosted on DigitalOcean
 
 ## Obtaining and Applying Custom Domain
 
+* Used namecheap for the custom domain
+* NameCheap only used for the purchase of the domain
+  * thus/i.e. DigitalOcean was used to host the DNS server
+  
+
 ## Obtaining SSL
+
+First: Verify correct ports are open
+`22 = tcp`
+`80 = http`
+`443 = https`
 
 in CLI
 
