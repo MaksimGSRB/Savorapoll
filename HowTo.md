@@ -251,8 +251,56 @@ Frontend:
 
 ## *Section 5: Frontend Code* 
 
+All of the frontend code found in the `index.html`
 
-### 5.1 Voting Button (HTML) 
+### 5.1 Styling
+
+- Some basic CSS done for styling
+- remember for CSS use american spelling `color` `center`
+- few classes made for the basics
+- quite self-explanatory
+
+```html
+
+<style>
+        body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding-top: 80px;
+        background-color: #f2f2f2;
+        }
+        h2 {
+        color: #333; <!-- "color" "center"... yuck  -->
+        }
+
+        .option-btn {
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 18px;
+        cursor: pointer;
+        border: none;
+        background-color: #007BFF;
+        color: white;
+        border-radius: 5px;
+        }
+        .option-btn:hover {
+        background-color: #0056b3;
+        }
+        .option-btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        }
+        #result {
+        margin-top: 20px;
+        font-size: 18px;
+        color: green;
+        }
+        </style>
+
+```
+
+### 5.2 Voting Button (HTML) 
+
 
 ```HTML
 
@@ -260,49 +308,204 @@ Frontend:
 <button class="option-btn" onclick="handleVote('q1', 'No')">No</button>
 <p id="result-q1"></p>
 
-
 ```
 
-
+- starting off pretty simple with a vote button
 - Basic HTML for a vote button
 - note the `handleVote(...`
+- the class="option-btn" called from CSS styling done
 
 
-### 5.2 Submit Vote (JavaScript)
 
-- Pretty standard JS stuff here
+
+### 5.3 Submit Vote (JavaScript)
 
 
 ```js
 
-function handleVote(questionId, choice) {
-	if (votedQuestions[questionId]) return;
+        const votedQuestions = {}; // empt obj track q user already votred on
 
-votedQuestions[questionId] = true;
+        function handleVote(questionId, choice) {
+                if (votedQuestions[questionId]) return; //prev dupe votes
 
-document.getElementById(`result-${questionId}`).textContent = `You voted: ${choice}`;
-document.querySelectorAll(`.option-btn[onclick*="${questionId}"]`).forEach(btn => btn.disabled = true);
+        votedQuestions[questionId] = true; //usr attempt vote on q = blocked
 
-fetch('/submit-vote',{
-	method:'POST',
-	headers: { 'Content-Type': 'application/json' },
-	body: JSON.stringify({ question: questionId, vote:: choice})
-		});
-	}
+	//gives usr feedback on vote
+        document.getElementById(`result-${questionId}`).textContent = `You voted: ${choice}`;
+
+	//disables all buttons after vote
+        document.querySelectorAll(`.option-btn[onclick*="${questionId}"]`).forEach(btn => btn.disabled = true);
+
+        //sends POST req to backend
+        fetch('/submit-vote', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: questionId, vote: choice }) //converts data to JSON
+        	});
+	  }
+
+     
 ```
 
+- comments explain most of it
+- Two main functions shown in this code block
+- 1. handle vote function
+- 2. send POST req to backend
+  
 
 
-5.3 View Results Button (HTML)
+### 5.4 View Results Button (HTML)
 
+```HTML
 
-5.4 Load Results (JavaScript)
+<button onclick="loadResults()">View Results</button>
+<div id="results-container"></div>
+
+```
+- again pretty self-explanatory
+- posting this here so you can see the:
+	- name for the (currently) empty div
+	- call for the `loadResults()` func
+
+### 5.5 Load Results (JavaScript)
+
+```JS
+        // when called: sends GET req to backend/(/results)
+        function loadResults() {
+                fetch('/results') 
+                .then(res => res.json()) // responds w/ JSON data
+                        .then(data => {
+                        const container = document.getElementById('results-container');
+                        container.innerHTML = '';
+
+        // loops through each q from backend 
+        // for each q , get result obj
+        for (const question in data) {
+                const result = data[question];
+                container.innerHTML += `<h3>Results for ${question}</h3>`;
+
+                //for each option in q, get vote count + %  
+
+                for (const option in result) {
+                        const { count, percent } = result[option];
+                        container.innerHTML += `<p>${option}: ${count} votes (${percent})</p>`;
+                        }
+                }
+        });
+}
+
+```
+
+The comments here explain most of it and you can kind of see how all of the frontend intertwines.
+The beauty of if it is that all of this is shown dynamically on the page, no need for a page reload
+to show the results.
+
 
 
 
 ## *Section 6: Backend Code*
 
+Things get a little trickier from here.
 
-6.1 Route: Submit Vote
-6.2 Route: Results
-6.3 App Listen
+### 6.1 Route: Submit Vote
+
+```JS
+
+
+// ----- POST /submit-vote -----
+
+// setting up /submit-vote endpoint
+// gens timestamp aswell to know when vote was made
+
+app.post('/submit-vote', (req, res) => {
+  const { question, vote } = req.body;
+  const timestamp = new Date().toISOString();
+
+// input validation - avoid corrupt data
+
+  if (!question || !vote) {
+    return res.status(400).send('Missing question or vote');
+  }
+
+  const voteEntry = { question, vote, timestamp };
+
+
+// appends vote as JSON str
+// '\n'so new vote stored on new line
+
+fs.appendFile('/var/www/vote-server/votes.json', JSON.stringify(voteEntry) + '\n', err => {
+    if (err) {
+      console.error('Error saving vote:', err);
+      return res.status(500).send('Error saving vote');
+    }
+    res.status(200).send('Vote saved');
+  });
+});
+
+
+```
+- note the importance of the input validation func
+	- any corrupt data can throw off the entire `loadResults()` func from earlier
+   	  	- can mess up the vote % and whole site could fail when loading results
+  
+      	  	
+
+### 6.2 Route: Results
+
+```JS
+
+// ----- GET /results -----
+
+// sets up a GET endpoint "/results"
+app.get('/results', (req, res) => {
+
+// reads votes.json as utf8
+  fs.readFile('/var/www/vote-server/votes.json', 'utf8', (err, data) => {
+    if (err) return res.status(500).send('Error reading vote data');
+
+// splits file into lines
+// filters out any empty lines just incase
+// parses each line into JS obj + builds arr "votes"
+
+    const lines = data.trim().split('\n');
+    const votes = lines.filter(line => line.trim() !== '').map(line => JSON.parse(line));
+
+// holds the vote counts
+    const results = {};
+
+// loop over all votes
+// skips any bad vote missing "q$" or "vote"
+   for (const { question, vote } of votes) {
+      if (!question || !vote) continue;
+
+// if first time seeing question --> add to results
+// if first time seeing vote opt --> init to 0
+
+      if (!results[question]) results[question] = {};
+      if (!results[question][vote]) results[question][vote] = 0;
+
+      results[question][vote]++;
+    }
+
+/*
+* block calcs total num of votes for curr q + % thingy in q
+* replaces raw count w/ results obj + sends back as json
+* init a to 0 because of reduce() and if empt arr goes through then everything breaks
+*/
+
+ for (const q in results) {
+    const total = Object.values(results[q]).reduce((a, b) => a + b, 0);
+      for (const option in results[q]) {
+        const count = results[q][option];
+        const percent = ((count / total) * 100).toFixed(1);
+        results[q][option] = { count, percent: `${percent}%` };
+      }
+    }
+
+    res.json(results);
+  });
+});
+
+```
+
+### 6.3 App Listen
