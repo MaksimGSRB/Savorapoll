@@ -95,44 +95,208 @@ You can reset the root password at any point through DOcean.
 - Expires 20/04/2026
  
  
-#### 2.3.1 NameCheap + DOcean DNS Host Records
+#### 2.3.1 NameCheap + DOcean: Nameservers
+
+- Need to have namecheap or DOcean to host DNS records
+- Decided to use DOcean for nameservers
+- In namecheap:
+  	- Custom DNS
+  	- For nameserver 1, 2, 3; input the following as corresponds
+ 	 	- `ns1.digitalocean.com`
+  		- `ns2.digitalocean.com`
+  		- `ns3.digitalocean.com`
+
+#### 2.3.2 DNS Records
+
+- With the nameserver setup and pointing to DOcean
+- Now need to have correct DNS records for our site
+- The screenshot below lays out the current settings for the Savorapoll domain
+
+
+  ![image](https://github.com/user-attachments/assets/0714e631-d386-49c3-afb7-dfa6a96ef132)
+
+
+Regarding the image above, lets explain each record, line by line
+
+Line 1:
+- Type:
+	- CNAME (Canonical Name) (record type that points one domain to another)
+- Value:
+	- www.savorapoll.com points to savorapoll.com
+  	- Thus: someonetypes in www.savorapoll.com, directs to savorapoll.com (the domain we purchased)
+- TTL (Time To Live) (basically a stop watch for how long to keep a DNS record)
+	- in seconds and not lowered to 1800 (default was much higher)
+   	- since were currently in a stage of doing frequent changes to our website
+   	- Decided to stick with 1800 so the DNS Cache updates frequently (same for all)
+
+Line 2-4
+- Type:
+  	- NS (nameserver) (specifies the DNS servers for a given domain)
+- Value:
+  	- directs to ns1.digitalocean.com (ns2... ns3...)
+- TTL:
+  	- kept default (1800)
+
+Line 5:
+- Type:
+  	- A (address) (indicates IP add associated with given domain name)
+- Value:
+  	- directs to our default IPv4 (134.199.168.41)
+- TTL:
+  	- kept default (3600)
+  
+
+
 
 ### 2.4 Obtaining TLS/SSL
 
+- Ironically: purchasing the SSL cert from namecheap is not cheap
+- decided to use the free and well-known "Let's Encrypt"
 
+#### 2.4.1 Ensure correct ports are open
+
+- Need to have port 80 (HTTP) and port 443 (HTTPS) open
+	- If not open by now; run:
+	- `sudo ufw allow 80/tcp`
+	- `sudo ufw allow 443/tcp`
+	- `sudo ufw enable`
+
+- For future reference;
+- If need to check port 80 and port 443 are open
+	- `curl -I http://localhost`
+	- `curl -I https://localhost`
+
+- or alternatively (eaiser)
+
+	- `sudo ufw status`
+	- should show something along the lines of...
+	- `80/tcp allow`
+	- `443/tcp allow`
+
+#### 2.4.2 Certbot + Let's Encrypt 
+
+- In CLI
+	- `sudo apt update`
+	- `sudo apt install certbot python3-certbot-apache -y`
+	- `sudo certbot --apache`
+- follow prompts so that it will apply to both domains (www.sav... + sav...)
+
+#### 2.4.3 Update Apache2
+
+- Will now need to update the virtual host config
+	- `cd /etc/apache2/sites-available/`
+	- `nano 000-default.conf`
+	- replace to ServerName savorapoll.com
+	- replace to ServerAlias www.savorapoll.com
+
+- do the same for:
+	- `000-default-le-ssl.conf`
+	- `default-ssl.conf`
+	- (both located in same dir)
 
 ## *Section 3: Directory Guide*
 
+- For simplicity and future reference
 
+  	- whenever referring to **apache2 config**
+ 	- `/etc/apache2/sites-available`
 
-
-*useful section for the millions of files*
-
-3.1 Frontend 
-
-3.2 Backend
-
+	- for mostly everything else were focusing on
+   	- `/var/www/html`
 
 ## *Section 4: Fullstack Overview*
 
+### 4.3 Architecture
 
 
-4.3 Architecture
+![image](https://github.com/user-attachments/assets/c6b3ed8c-1b92-4e7e-b507-adb75c831aef)
 
-4.4 End-to-End Data flow
+
+
+### 4.4 End-to-End Data flow
+
+**_Voting Function_**
+
+Frontend: 
 	
-Frontend: User Clicks Vote Button
+> User Clicks Vote Button -->
+
+Backend: 
+	
+> Receives POST /submit-vote -->
+>		
+>> saves vote in votes.json -->
+
+**_View Results Function_**
+
+Frontend: 
+	
+> User clicks view results button -->
+
+Backend: 
+	
+> Receives GET /results -->
+>		
+>> reads votes.json -->
+>>
+>>> calculates % -->
+>>>
+>>>> sends JSON -->
+
+Frontend: 
+	
+> Displays formatted results to user
+  
 	
 
 ## *Section 5: Frontend Code* 
 
 
+### 5.1 Voting Button (HTML) 
+
+```HTML
+
+<button class="option-btn" onclick="handleVote('q1', 'Yes')">Yes</button>
+<button class="option-btn" onclick="handleVote('q1', 'No')">No</button>
+<p id="result-q1"></p>
 
 
-5.1 Voting Button (HTML) 
-5.2 Submit Vote (JS)
+```
+
+
+- Basic HTML for a vote button
+- note the `handleVote(...`
+
+
+### 5.2 Submit Vote (JavaScript)
+
+- Pretty standard JS stuff here
+
+
+```js
+
+function handleVote(questionId, choice) {
+	if (votedQuestions[questionId]) return;
+
+votedQuestions[questionId] = true;
+
+document.getElementById(`result-${questionId}`).textContent = `You voted: ${choice}`;
+document.querySelectorAll(`.option-btn[onclick*="${questionId}"]`).forEach(btn => btn.disabled = true);
+
+fetch('/submit-vote',{
+	method:'POST',
+	headers: { 'Content-Type': 'application/json' },
+	body: JSON.stringify({ question: questionId, vote:: choice})
+		});
+	}
+```
+
+
+
 5.3 View Results Button (HTML)
-5.4 Load Results (JS)
+
+
+5.4 Load Results (JavaScript)
 
 
 
