@@ -521,7 +521,7 @@ app.listen(PORT, () => {
 
 - tells server listen for incoming HTTP reqs
 
-## 7 Apache Config: ProxyPass
+## *Section 7: Apache Config: ProxyPass*
 
 - Now backend and frontend code configured
 - need to bridge the connection between the two
@@ -540,7 +540,7 @@ app.listen(PORT, () => {
 - Using reverse proxy protecvts backend from direct exposure
 
 
-## 8 Backend/Server Management
+## *Section 8: Backend/Server Management*
 
 - running `node server.js` starts the backend up
 - if any changes were made the server would stop running
