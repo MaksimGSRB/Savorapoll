@@ -1,6 +1,6 @@
 README/HOWTO ON SAVORAPROJECT
 
-
+Guide by Maxim.G
 
 # Savorapoll Project Guide
 
@@ -19,8 +19,8 @@ DOcean = DigitalOcean, a cloud computing provider
 ## *Section 1: Introduction*
 
 This document is an overview to the Savorapoll project, the list of the sections does not reflect the exact order of tasks done to create Savora.
-It is however roughly in the order that everything was created. This guide is intended for myself in the future so I can go back and see exactly
-what I have done and how because honestly I would forget. 
+It is however roughly in the order that everything was created. 
+This guide is intended to help understand the creation of Savora and assist in potential errors that you may come across in the future 
 
 For everyone else: I hope this guide is clear enough so that people with moderate 
 or possibly even a basic understanding of WebDev Languages (HTML, CSS, JavaScript) and Linux CLI can follow it. 
@@ -71,10 +71,11 @@ which we will need later down the line.
 Can choose whether you want to SSH root with password or SSH Keygen,
 <br>I went with using a root password much eaiser than using the public key everytime.
 You can reset the root password at any point through DOcean. 
+Obviously, will not provide root pwd here.
 
 - Super basic stuff here
 - on our own VM
-- `sudo ssh root@IPV4AddressOfYourDroplet`
+- `sudo ssh root@134.199.168.41`
 - follow prompts
 - your now in your droplets CLI
 
@@ -88,8 +89,6 @@ You can reset the root password at any point through DOcean.
 
 ### 2.3 Obtaining and Applying a Domain
 
-- Obviously we do not want people to get onto our website via the IPv4 address
-- Obtaining a custom domain is quite a smooth and simple process
 - decided to use NameCheap for getting custom domain name
 - managed to purchase savorapoll.com
 - Expires 20/04/2026
@@ -110,13 +109,13 @@ You can reset the root password at any point through DOcean.
 
 - With the nameserver setup and pointing to DOcean
 - Now need to have correct DNS records for our site
-- The screenshot below lays out the current settings for the Savorapoll domain
+- The screenshot below lays out the current settings for the savorapoll domain
 
 
   ![image](https://github.com/user-attachments/assets/0714e631-d386-49c3-afb7-dfa6a96ef132)
 
 
-Regarding the image above, lets explain each record, line by line
+Regarding the image above, lets explain each record, line by line.
 
 Line 1:
 - Type:
@@ -179,6 +178,7 @@ Line 5:
 	- `sudo apt update`
 	- `sudo apt install certbot python3-certbot-apache -y`
 	- `sudo certbot --apache`
+
 - follow prompts so that it will apply to both domains (www.sav... + sav...)
 
 #### 2.4.3 Update Apache2
@@ -405,7 +405,6 @@ to show the results.
 
 ## *Section 6: Backend Code*
 
-Things get a little trickier from here.
 
 ### 6.1 Route: Submit Vote
 
@@ -509,3 +508,47 @@ app.get('/results', (req, res) => {
 ```
 
 ### 6.3 App Listen
+
+// ----- Start Server ----- 
+
+```JS
+
+app.listen(PORT, () => {
+	console.log(`Vote server running on http://localhost:${PORT}`);
+	});
+
+```
+
+- tells server listen for incoming HTTP reqs
+
+## 7 Apache Config: ProxyPass
+
+- Now backend and frontend code configured
+- need to bridge the connection between the two
+
+- In apache 2
+- edit the `.conf` files
+- below `ServerAlias www.savorapoll.com`
+- add
+
+`ProxyPass "/submit-vote" "http://localhost:3000/submit-vote"`
+`ProxyPassReverse "/submit-vote" "http://localhost:3000/submit-vote"`
+
+`ProxyPass "/results" "http://localhost:3000/results"`
+`ProxyPassReverse "/results" "http://localhost:3000/results"`
+
+- These ProxyPass lines allow apache to pass the requests to our backend
+- Using reverse proxy protecvts backend from direct exposure
+
+
+
+
+
+
+
+
+
+
+
+
+
