@@ -528,8 +528,7 @@ app.listen(PORT, () => {
 
 - In apache 2
 - edit the `.conf` files
-- below `ServerAlias www.savorapoll.com`
-- add
+- below `ServerAlias www.savorapoll.com` add
 
 `ProxyPass "/submit-vote" "http://localhost:3000/submit-vote"`
 `ProxyPassReverse "/submit-vote" "http://localhost:3000/submit-vote"`
@@ -541,14 +540,25 @@ app.listen(PORT, () => {
 - Using reverse proxy protecvts backend from direct exposure
 
 
+## 8 Backend/Server Management
+
+- running `node server.js` starts the backend up
+- if any changes were made the server would stop running
+- to fix this...
 
 
+- Global install PM2
+- `npm install -g pm2`
+- now for PM2 to run
+- `pm2 start /var/www/vote-server/server.js --name savora`
+- `pm2 save`
+- `pm2 startup`
 
 
-
-
-
-
-
+- now whenever any changes are made to server.js,
+	- no need to run `node server.js`
+ - server will reboot every single time automatically
+ - just incase; can always check the status via
+ - `pm2 status`
 
 
